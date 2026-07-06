@@ -1,0 +1,125 @@
+openapi: 3.0.3
+info:
+  title: Render OCR API
+  version: 1.0.0
+  description: PDF text extraction and OCR API for Coze workflows.
+servers:
+  - url: https://YOUR_RENDER_SERVICE.onrender.com
+paths:
+  /health:
+    get:
+      operationId: health
+      summary: Health check
+      responses:
+        "200":
+          description: Service is healthy
+  /dependencies:
+    get:
+      operationId: dependencies
+      summary: Check runtime dependencies
+      responses:
+        "200":
+          description: Dependency status
+  /jobs:
+    post:
+      operationId: create_ocr_job
+      summary: Create OCR job from PDF URL
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - file_url
+              properties:
+                file_url:
+                  type: string
+                  description: Publicly reachable PDF URL.
+                file_name:
+                  type: string
+                max_pages:
+                  type: integer
+                  default: 300
+                page_start:
+                  type: integer
+                page_end:
+                  type: integer
+                dpi:
+                  type: integer
+                  default: 150
+                langs:
+                  type: string
+                  default: eng+chi_tra
+                ocr_engine:
+                  type: string
+                  enum: [auto, rapidocr, tesseract]
+                  default: auto
+      responses:
+        "200":
+          description: Job created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  job_id:
+                    type: string
+                  status:
+                    type: string
+                  status_url:
+                    type: string
+                  result_url:
+                    type: string
+  /jobs/{job_id}:
+    get:
+      operationId: get_ocr_job_status
+      summary: Get OCR job status
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: job_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Job status
+  /jobs/{job_id}/result:
+    get:
+      operationId: get_ocr_job_result
+      summary: Get OCR job result
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: job_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OCR result
+  /jobs/{job_id}/text:
+    get:
+      operationId: get_ocr_job_text
+      summary: Get extracted text only
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: job_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Plain text result
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
