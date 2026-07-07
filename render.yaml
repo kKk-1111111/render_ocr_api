@@ -1,0 +1,39 @@
+services:
+  - type: web
+    name: render-ocr-api
+    env: docker
+    plan: starter
+    healthCheckPath: /health
+    envVars:
+      - key: STORAGE_DIR
+        value: /app/storage
+      - key: MAX_DOWNLOAD_MB
+        value: "100"
+      - key: MAX_PAGES_PER_JOB
+        value: "400"
+      - key: DEFAULT_DPI
+        value: "150"
+      - key: SCANNED_PAGE_DPI
+        value: "120"
+      - key: DEFAULT_LANGS
+        value: eng+chi_tra
+      - key: CORS_ALLOW_ORIGINS
+        value: "*"
+      - key: PDF_TEXT_TIMEOUT_SECONDS
+        value: "45"
+      - key: PAGE_RENDER_TIMEOUT_SECONDS
+        value: "60"
+      - key: PAGE_OCR_TIMEOUT_SECONDS
+        value: "60"
+      - key: TESSERACT_TIMEOUT_SECONDS
+        value: "45"
+      - key: OCR_WORKER_RECYCLE_PAGES
+        value: "1"
+      - key: OCR_ENABLE_ENGINE_FALLBACK
+        value: "false"
+      - key: OCR_FORCE_TESSERACT
+        value: "true"
+      - key: MAX_CONSECUTIVE_OCR_FAILURES
+        value: "0"
+      - key: STORE_PAGE_DETAILS
+        value: "false"
